@@ -52,16 +52,13 @@ struct SwiftPlayground {
         print("Room volume: \(roomVolume)m³")
 
         //Loop through furniture
-        ///The count of furniture items gone through
-        var index = 1
         ///The total volume of furniture
         var totalFurnitureVolume = 0.0 
-        for furniture in furnitureVolumes{
+        for (index, furniture) in furnitureVolumes.enumerated(){
             if (furniture > 2.0){
                 print("Oversized Furniture Detected")
             }
-            print("Item \(index): \(furniture)m³")
-            index+=1
+            print("Item \(index+1): \(furniture)m³")
             totalFurnitureVolume += furniture
         }
 
