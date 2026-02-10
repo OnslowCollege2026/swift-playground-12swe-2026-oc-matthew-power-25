@@ -1,47 +1,32 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+//Get a valid number above zero from a prompt and return it
+func readNumber(prompt:String) -> Double {
+    print(prompt)
+    guard let userInput = readLine(), let number = Double(userInput), number > 0 else {
+        print("Invalid Number")
+        return readNumber(prompt: prompt)
+    }
+    return number
+}
+
 @main
 struct SwiftPlayground {
     static func main() {
-        //Declare variables to be edited, with -1 as a default if input is invalid
-        var roomLength = -1.0
-        var roomWidth = -1.0
-        var roomHeight = -1.0
+
+        ///the threshold of an overisize piece of furniture
+        let maximumItemVolume = 2.0
+        ///the threshold of usable volume being too small
+        let minimumUsableVolume = 60.0
 
         //Declare furniture sizes in an array
         let furnitureVolumes = [1.2, 0.8, 2.5, 0.6, 1.0]
 
         //Get Dimensions
-        while(roomLength <= 0.0){
-            print("Enter Room Length:")
-            if let input = readLine(), let length = Double(input), length > 0.0{
-                roomLength = length
-                print("Accepted Length: \(length)m")
-            } else {
-                print("Invalid input.")
-            } 
-        }
-
-        while(roomWidth <= 0.0){
-            print("Enter Room Width:")
-            if let input = readLine(), let width = Double(input), width > 0.0{
-                roomWidth = width
-                print("Accepted Width: \(width)m")
-            } else {
-                print("Invalid input.")
-            }
-        }
-
-        while(roomHeight <= 0.0){
-            print("Enter Room Height:")
-            if let input = readLine(), let height = Double(input), height > 0.0{
-                roomHeight = height
-                print("Accepted Height: \(height)m")
-            } else {
-                print("Invalid input.")
-            }
-        }
+        let roomLength = readNumber(prompt: "Enter Room Length:")
+        let roomWidth = readNumber(prompt: "Enter Room Width")
+        let roomHeight = readNumber(prompt: "Enter Room Height")
 
         //Calculate and print the area of the room
         let roomArea = roomLength * roomWidth
@@ -54,12 +39,12 @@ struct SwiftPlayground {
         //Loop through furniture
         ///The total volume of furniture
         var totalFurnitureVolume = 0.0 
-        for (index, furniture) in furnitureVolumes.enumerated(){
-            if (furniture > 2.0){
+        for (index, volume) in furnitureVolumes.enumerated(){
+            if (volume > maximumItemVolume){
                 print("Oversized Furniture Detected")
             }
-            print("Item \(index+1): \(furniture)m³")
-            totalFurnitureVolume += furniture
+            print("Item \(index+1): \(volume)m³")
+            totalFurnitureVolume += volume
         }
 
         //Calculate and print the leftover volume in the room
@@ -67,7 +52,7 @@ struct SwiftPlayground {
         print("Usable Volume: \(usableVolume)m³")
 
         //Check if usable volume is less than 60m3, print warning if so
-        if(usableVolume < 60.0){
+        if(usableVolume < minimumUsableVolume){
             print("Usable volume is not large enough.")
         } else {
             print("Usable volume is fine.")
