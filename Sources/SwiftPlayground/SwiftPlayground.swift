@@ -15,7 +15,7 @@ func readNumber(prompt:String) -> Double {
 struct SwiftPlayground {
     static func main() {
 
-        ///the threshold of an overisize piece of furniture
+        ///the threshold of an overisize  piece of furniture
         let maximumItemVolume = 2.0
         ///the threshold of usable volume being too small
         let minimumUsableVolume = 60.0
