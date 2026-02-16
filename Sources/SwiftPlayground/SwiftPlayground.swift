@@ -44,18 +44,30 @@ func reducedHeight(original: Double, reductionPercent: Double) -> Double {
 struct SwiftPlayground {
     static func main() {
     
+        //Declare constants for room dimensions
         let roomLength = 3.6
         let roomWidth = 4.3
-        let roomHeight = 5.3
+        let roomHeight = 4.4
+        //Percentage to reduce the height of the room by
+        let reductionPercent = 15.0
+
+        //Calculate the reduced height of the room
+        let reducedHeight = reducedHeight(original: roomHeight, reductionPercent: reductionPercent)
         
+        //Calculate and print the area of the room
         let roomArea = area(length: roomLength, width: roomWidth)
         print("Room Area: \(roomArea) m²")
         
+        //Calculate and print the volume of the room
         let roomVolume = volume(length: roomLength, width: roomWidth, height: roomHeight)
-        
         print("Room Volume: \(roomVolume) m²")
 
-        if(isRoomSmall(volume: roomVolume)){
+        //Calculate and print the volume of the room, with the reduced height
+        let reducedHeightVolume = volume(length: roomLength, width: roomWidth, height: reducedHeight)
+        print("Room volume with reduced height: \(reducedHeightVolume) m²")
+
+        //Warn the user that the room is too small if the reduced volume is under 60 cubic meters
+        if(isRoomSmall(volume: reducedHeightVolume)){
             print("Room is small")
         } else {
             print("Room is not small")
