@@ -33,6 +33,9 @@ func menuChoice() -> Int
 }
 
 /// Add eggs to count
+/// Parameters:
+/// - currentStock: the current number of eggs
+/// - amount: the number of eggs to increase by
 /// Returns: The stock of eggs after increasing the count
 func addEggs(currentStock: Int, amount: Int) -> Int
 {
@@ -40,6 +43,9 @@ func addEggs(currentStock: Int, amount: Int) -> Int
 }
 
 /// Removes eggs from count
+/// Parameters:
+/// - currentStock: the current number of eggs
+/// - amount: the number of eggs to decrease by
 /// Returns: The stock of eggs after decreasing the count
 func sellEggs(currentStock: Int, amount: Int) -> Int
 {
@@ -47,6 +53,9 @@ func sellEggs(currentStock: Int, amount: Int) -> Int
 }
 
 /// Updates sold count
+/// Parameters:
+/// - currentStock: the current number of eggs sold
+/// - amount: the number of eggs to increase by
 /// Returns: The updated number of sold eggs
 func updateSoldCount(currentSold: Int, amount: Int) -> Int
 {
@@ -54,6 +63,8 @@ func updateSoldCount(currentSold: Int, amount: Int) -> Int
 }
 
 /// Creates a message showing number of eggs in stock
+/// Parameters:
+/// - stock: The amount of eggs in stock
 /// Returns a string containing the message
 func stockMessage(stock: Int) -> String
 {
@@ -62,6 +73,8 @@ func stockMessage(stock: Int) -> String
 }
 
 /// Creates a message showing number of eggs sold
+/// Parameters:
+/// - stock: The amount of eggs sold
 /// Returns a string containing the message
 func soldMessage(sold: Int) -> String
 {
