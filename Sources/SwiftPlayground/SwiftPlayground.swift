@@ -1,61 +1,115 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-//Get a valid number above zero from a prompt and return it
-func readNumber(prompt:String) -> Double {
+/// Get a valid integer from a range and return it
+/// Parameters:
+/// - from: the lower inclusive bound
+/// - to: the upper inclusive bound
+/// - prompt: the message printed to the user
+/// Returns: an integer entered by the user
+func readNumber(from min:Int, to max:Int, prompt:String) -> Int {
     print(prompt)
-    guard let userInput = readLine(), let number = Double(userInput), number > 0 else {
+    guard let userInput = readLine(), let number = Int(userInput), number >= min, number <= max else {
         print("Invalid Number")
-        return readNumber(prompt: prompt)
+        return readNumber(from: min, to: max, prompt: prompt)
     }
     return number
+}
+
+/// Gets a number from 1 to 5, depending on a users choice from the menu
+/// Returns: integer 1 to 5 representing a menu option
+func menuChoice() -> Int
+{
+    print("""
+    ==== Egg Shop ====
+    1. Add Eggs
+    2. Sell Eggs
+    3. Show current stock
+    4. Show eggs sold
+    5. Exit
+    """)
+
+    return readNumber(from: 1, to: 5, prompt: "Choose an option:")
+}
+
+/// Add eggs to count
+/// Returns: The stock of eggs after increasing the count
+func addEggs(currentStock: Int, amount: Int) -> Int
+{
+    return currentStock + amount
+}
+
+/// Removes eggs from count
+/// Returns: The stock of eggs after decreasing the count
+func sellEggs(currentStock: Int, amount: Int) -> Int
+{
+    return currentStock - amount
+}
+
+/// Updates sold count
+/// Returns: The updated number of sold eggs
+func updateSoldCount(currentSold: Int, amount: Int) -> Int
+{
+    return currentSold + amount
+}
+
+/// Creates a message showing number of eggs in stock
+/// Returns a string containing the message
+func stockMessage(stock: Int) -> String
+{
+    let newStockMessage = "Current stock of eggs is \(stock) eggs."
+    return newStockMessage
+}
+
+/// Creates a message showing number of eggs sold
+/// Returns a string containing the message
+func soldMessage(sold: Int) -> String
+{
+    let newSoldMessage = "Number of eggs sold is \(sold) eggs."
+    return newSoldMessage
 }
 
 @main
 struct SwiftPlayground {
     static func main() {
+        
+        // The number of eggs in stock and number sold
+        var eggsInStock = 0
+        var eggsSold = 0
 
-        ///the threshold of an overisize  piece of furniture
-        let maximumItemVolume = 2.0
-        ///the threshold of usable volume being too small
-        let minimumUsableVolume = 60.0
-
-        //Declare furniture sizes in an array
-        let furnitureVolumes = [1.2, 0.8, 2.5, 0.6, 1.0]
-
-        //Get Dimensions
-        let roomLength = readNumber(prompt: "Enter Room Length:")
-        let roomWidth = readNumber(prompt: "Enter Room Width")
-        let roomHeight = readNumber(prompt: "Enter Room Height")
-
-        //Calculate and print the area of the room
-        let roomArea = roomLength * roomWidth
-        print("Room area: \(roomArea)m²")
-
-        //Do the same again for volume
-        let roomVolume = roomArea * roomHeight
-        print("Room volume: \(roomVolume)m³")
-
-        //Loop through furniture
-        ///The total volume of furniture
-        var totalFurnitureVolume = 0.0 
-        for (index, volume) in furnitureVolumes.enumerated(){
-            if (volume > maximumItemVolume){
-                print("Oversized Furniture Detected")
+        while true{
+            let menuChosen = menuChoice()
+            // Add Eggs
+            if(menuChosen == 1){
+                let eggsToAdd = readNumber(from: 1, to: 1000, prompt: "How many eggs to add:")
+                eggsInStock = addEggs(currentStock: eggsInStock, amount: eggsToAdd)
+            } 
+            // Sell Eggs
+            else if(menuChosen == 2){
+                if(eggsInStock <= 0){
+                    print("No eggs to sell.")
+                    continue
+                }
+                let eggsToSell = readNumber(from: 1, to: eggsInStock, prompt: "How many eggs to sell:")
+                eggsInStock = sellEggs(currentStock: eggsInStock, amount: eggsToSell)
+                eggsSold = updateSoldCount(currentSold: eggsSold, amount: eggsToSell)
             }
-            print("Item \(index+1): \(volume)m³")
-            totalFurnitureVolume += volume
-        }
-
-        //Calculate and print the leftover volume in the room
-        let usableVolume = roomVolume - totalFurnitureVolume
-        print("Usable Volume: \(usableVolume)m³")
-
-        //Check if usable volume is less than 60m3, print warning if so
-        if(usableVolume < minimumUsableVolume){
-            print("Usable volume is not large enough.")
-        } else {
-            print("Usable volume is fine.")
+            // Show current stock 
+            else if(menuChosen == 3)
+            {
+                print(stockMessage(stock: eggsInStock))
+            }
+            // Show eggs sold
+            else if(menuChosen == 4)
+            {
+                print(soldMessage(sold: eggsSold))
+            }
+            // Exit
+            else if(menuChosen == 5)
+            {
+                print("Exiting program.")
+                break
+            }
         }
     }
 }
