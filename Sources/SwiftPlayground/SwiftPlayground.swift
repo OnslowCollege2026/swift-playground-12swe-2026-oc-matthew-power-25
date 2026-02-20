@@ -26,19 +26,25 @@ func menuChoice() -> Int
     2. Sell Eggs
     3. Show current stock
     4. Show eggs sold
-    5. Exit
+    5. Shop Summary
+    6. Exit
     """)
 
-    return readNumber(from: 1, to: 5, prompt: "Choose an option:")
+    return readNumber(from: 1, to: 6, prompt: "Choose an option:")
 }
 
-/// Add eggs to count
+/// Add eggs to count. does not change values if new stock is above 1000
 /// Parameters:
 /// - currentStock: the current number of eggs
 /// - amount: the number of eggs to increase by
 /// Returns: The stock of eggs after increasing the count
 func addEggs(currentStock: Int, amount: Int) -> Int
 {
+    let newStock = currentStock + amount
+    if(newStock > 1000){
+        print("Stock cannot exceed 1000. Values not changed.")
+        return currentStock
+    }
     return currentStock + amount
 }
 
@@ -74,12 +80,27 @@ func stockMessage(stock: Int) -> String
 
 /// Creates a message showing number of eggs sold
 /// Parameters:
-/// - stock: The amount of eggs sold
+/// - sold: The amount of eggs sold
 /// Returns a string containing the message
 func soldMessage(sold: Int) -> String
 {
     let newSoldMessage = "Number of eggs sold is \(sold) eggs."
     return newSoldMessage
+}
+
+/// Creates a message summarising the store's status
+/// Parameters:
+/// - stock: The current number of eggs in stock
+/// - sold: The total number of eggs sold
+/// Returns a summary message as a string
+func summaryMessage(stock: Int, sold: Int) -> String
+{
+    let newSummaryMessage = """
+    ==== Summary ====
+    The shop currently has \(stock) eggs in stock.
+    A total of \(sold) eggs have been sold.
+    """
+    return newSummaryMessage
 }
 
 @main
@@ -117,8 +138,13 @@ struct SwiftPlayground {
             {
                 print(soldMessage(sold: eggsSold))
             }
-            // Exit
+            // Summary
             else if(menuChosen == 5)
+            {
+                print(summaryMessage(stock: eggsInStock, sold: eggsSold))
+            }
+            // Exit
+            else if(menuChosen == 6)
             {
                 print("Exiting program.")
                 break
