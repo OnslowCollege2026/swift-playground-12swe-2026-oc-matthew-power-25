@@ -1,61 +1,84 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-//Get a valid number above zero from a prompt and return it
-func readNumber(prompt:String) -> Double {
-    print(prompt)
-    guard let userInput = readLine(), let number = Double(userInput), number > 0 else {
-        print("Invalid Number")
-        return readNumber(prompt: prompt)
+func print(board: [[String]])
+{
+    for (i, line) in board.enumerated(){
+        print("\(line[0]) | \(line[1]) | \(line[2])")
+        if(i != 2) {
+            print("--+---+--")
+        }
     }
-    return number
+
+    print()
+}
+
+func askForPosition(board: [[String]]) -> [Int]
+{
+    while true {
+        var rowNum = -1
+        var colNum = -1
+        print("Please enter the row number, 1-3: ")
+        if let userInput = readLine(), let rowNumber = Int(userInput), rowNumber - 1 >= 0, rowNumber - 1 <= 2{
+            rowNum = rowNumber - 1
+        } else {
+            continue
+        }
+
+        print("Please enter the column number, 1-3: ")
+        if let userInput2 = readLine(), let columnNumber = Int(userInput2), columnNumber - 1 >= 0, columnNumber - 1 <= 2{
+            colNum = columnNumber - 1
+        } else {
+            continue
+        }
+
+        if(board[rowNum][colNum] == "."){
+            return [rowNum, colNum]
+        } 
+    }
+}
+
+func checkBoardFull(board : [[String]]) -> Bool
+{
+    for row in 0...2
+    {
+        for col in 0...2
+        {
+            if(board[row][col] == ".")
+            {
+                return false
+            } else {
+                continue
+            }
+        }
+    }
+    return true
 }
 
 @main
 struct SwiftPlayground {
     static func main() {
+        var player = "X"
 
-        ///the threshold of an overisize  piece of furniture
-        let maximumItemVolume = 2.0
-        ///the threshold of usable volume being too small
-        let minimumUsableVolume = 60.0
+        var board = [
+            [".", ".", "."], // row 0
+            [".", ".", "."], // row 1
+            [".", ".", "."], // row 2
+        ]
 
-        //Declare furniture sizes in an array
-        let furnitureVolumes = [1.2, 0.8, 2.5, 0.6, 1.0]
+        print(board: board)
 
-        //Get Dimensions
-        let roomLength = readNumber(prompt: "Enter Room Length:")
-        let roomWidth = readNumber(prompt: "Enter Room Width")
-        let roomHeight = readNumber(prompt: "Enter Room Height")
+        while !checkBoardFull(board: board){
+            let position = askForPosition(board: board)
+            board[position[0]][position[1]] = player
 
-        //Calculate and print the area of the room
-        let roomArea = roomLength * roomWidth
-        print("Room area: \(roomArea)m²")
-
-        //Do the same again for volume
-        let roomVolume = roomArea * roomHeight
-        print("Room volume: \(roomVolume)m³")
-
-        //Loop through furniture
-        ///The total volume of furniture
-        var totalFurnitureVolume = 0.0 
-        for (index, volume) in furnitureVolumes.enumerated(){
-            if (volume > maximumItemVolume){
-                print("Oversized Furniture Detected")
+            if(player == "O"){
+                player = "X"
+            } else {
+                player = "O"
             }
-            print("Item \(index+1): \(volume)m³")
-            totalFurnitureVolume += volume
-        }
 
-        //Calculate and print the leftover volume in the room
-        let usableVolume = roomVolume - totalFurnitureVolume
-        print("Usable Volume: \(usableVolume)m³")
-
-        //Check if usable volume is less than 60m3, print warning if so
-        if(usableVolume < minimumUsableVolume){
-            print("Usable volume is not large enough.")
-        } else {
-            print("Usable volume is fine.")
+            print(board: board)
         }
     }
 }
