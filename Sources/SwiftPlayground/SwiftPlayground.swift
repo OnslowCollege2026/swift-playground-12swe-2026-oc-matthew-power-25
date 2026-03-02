@@ -1,61 +1,117 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-//Get a valid number above zero from a prompt and return it
-func readNumber(prompt:String) -> Double {
-    print(prompt)
-    guard let userInput = readLine(), let number = Double(userInput), number > 0 else {
-        print("Invalid Number")
-        return readNumber(prompt: prompt)
+func taskA()
+{
+    let temperatures = [
+            [13,11,12,16],
+            [14,13,9,15],
+            [12,15,13,14]
+        ]
+
+        //Print the full first row
+        print("Full first row.")
+        for temp in temperatures[0] {
+            print(temp)
+        }
+        //The value in row 2, column 3.
+        print("The value in row 2, column 3 is:")
+        print(temperatures[1][2])
+        //The value in row 3, column 1.
+        print("The value in row 3, column 1 is:")
+        print(temperatures[2][0])
+        //The average temperature of row 2.
+        print("The average temperature of row 2 is:")
+        var runningTotal = 0.0
+        for temp in temperatures[1] {
+            runningTotal += Double(temp)
+        }
+        let average = runningTotal / Double(temperatures[1].count)
+        print(average)
+}
+
+func taskB() {
+    let table = [
+        [2, 4, 6],
+        [8, 10, 12],
+        [14, 16, 18]
+    ]
+
+    var runningTotal = 0
+    for row in table{
+        for value in row {
+            print(value)
+            runningTotal += 1
+        }
     }
-    return number
+
+    print("Printed \(runningTotal) total values.")
+}
+
+func taskC() {
+    let table = [
+        [3, 5, 7, 9],
+        [2, 4],
+        [8, 6, 1],
+        [10]
+    ]
+    for i in 0...3 {
+        print("Column \(i) total is \(columnTotal(in: table, column: i))")
+    }
+}
+
+func taskD() {
+    let readings = [
+        [1.5, 3.2, 2.8],
+        [7.1],
+        [4.4, 6.0],
+        [5.9, 8.3, 0.7, 2.2]
+    ]
+
+    if maxValue(in: readings) != nil{
+        let maxValue = maxValue(in: readings)!
+        print("The max value is \(maxValue)")
+    } else {
+        print("Table is nil")
+    }
+}
+
+func columnTotal(in table: [[Int]], column: Int) -> Int
+{
+    var total = 0
+    for row in table{
+        if(row.count > column){
+            total += row[column]
+        }
+    }
+    return total
+}
+
+func maxValue(in table: [[Double]]) -> Double? {
+    //Check if array is empty
+    if(table.count <= 0 && table[0].count <= 0){
+        return nil
+    }
+    //Otherwise find max
+    var max = 0.0
+    for row in table{
+        for value in row {
+            if(value) > max{
+                max = value
+            }
+        }
+    }
+    return max
 }
 
 @main
 struct SwiftPlayground {
     static func main() {
 
-        ///the threshold of an overisize  piece of furniture
-        let maximumItemVolume = 2.0
-        ///the threshold of usable volume being too small
-        let minimumUsableVolume = 60.0
+        taskA()
+        taskB()
+        taskC()
+        taskD()
 
-        //Declare furniture sizes in an array
-        let furnitureVolumes = [1.2, 0.8, 2.5, 0.6, 1.0]
-
-        //Get Dimensions
-        let roomLength = readNumber(prompt: "Enter Room Length:")
-        let roomWidth = readNumber(prompt: "Enter Room Width")
-        let roomHeight = readNumber(prompt: "Enter Room Height")
-
-        //Calculate and print the area of the room
-        let roomArea = roomLength * roomWidth
-        print("Room area: \(roomArea)m²")
-
-        //Do the same again for volume
-        let roomVolume = roomArea * roomHeight
-        print("Room volume: \(roomVolume)m³")
-
-        //Loop through furniture
-        ///The total volume of furniture
-        var totalFurnitureVolume = 0.0 
-        for (index, volume) in furnitureVolumes.enumerated(){
-            if (volume > maximumItemVolume){
-                print("Oversized Furniture Detected")
-            }
-            print("Item \(index+1): \(volume)m³")
-            totalFurnitureVolume += volume
-        }
-
-        //Calculate and print the leftover volume in the room
-        let usableVolume = roomVolume - totalFurnitureVolume
-        print("Usable Volume: \(usableVolume)m³")
-
-        //Check if usable volume is less than 60m3, print warning if so
-        if(usableVolume < minimumUsableVolume){
-            print("Usable volume is not large enough.")
-        } else {
-            print("Usable volume is fine.")
-        }
     }
 }
