@@ -134,8 +134,8 @@ struct SwiftPlayground {
             printBoard(guesses)
 
             // Get the users tile chosen
-            let row = readNumber(prompt: "Enter Row, from 0 to 5.", from: 0, to: 5)
-            let column = readNumber(prompt: "Enter Column, from 0 to 5", from: 0, to: 5)
+            let row = readNumber(prompt: "Enter Row, from 0 to 5.", from: 0, to: size-1)
+            let column = readNumber(prompt: "Enter Column, from 0 to 5", from: 0, to: size-1)
 
             // Alter the guesses array
             guesses = processGuess(row: row, col: column, ocean: ocean, guesses: guesses)
