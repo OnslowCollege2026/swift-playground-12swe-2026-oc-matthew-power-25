@@ -120,7 +120,7 @@ struct SwiftPlayground {
         /// Where the player has guessed, either hit (X) or miss (O), otherwise empty sea (~)
         var guesses = Array(repeating: Array(repeating: "~", count: size), count: size)
         /// Number of turns for user
-        let turns = 10
+        let turns = 15
 
         // Randomize board
         ocean = randomShipPlacement(size: 6, shipCount: 4)
@@ -128,7 +128,7 @@ struct SwiftPlayground {
         // print(ocean)
 
         // Main loop
-        for i in 0...turns-1 {
+        for _ in 0..<turns {
             // Show the board to the user
             print("Guesses: ")
             printBoard(guesses)
