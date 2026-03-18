@@ -99,8 +99,8 @@ func randomShipPlacement(size: Int, shipCount: Int) -> [[String]]
     ///Counter of ships placed
     var placed = 0
     while placed < shipCount {
-        let row = Int.random(in: 0...5)
-        let col = Int.random(in: 0...5)
+        let row = Int.random(in: 0..<size)
+        let col = Int.random(in: 0..<size)
         if ocean[row][col] == "~" {
             ocean[row][col] = "S"
             placed += 1
