@@ -104,7 +104,6 @@ struct SwiftPlayground {
                     // Otherwise print the answer
                     print("Incorrect.")
                     print("The correct answer was \(vocabulary[incorrectIndex][1]).")
-                    incorrectCount += 1
                 }
             }
         }
