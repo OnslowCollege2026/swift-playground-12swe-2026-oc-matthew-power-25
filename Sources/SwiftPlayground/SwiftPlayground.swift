@@ -1,61 +1,115 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-//Get a valid number above zero from a prompt and return it
-func readNumber(prompt:String) -> Double {
-    print(prompt)
-    guard let userInput = readLine(), let number = Double(userInput), number > 0 else {
-        print("Invalid Number")
-        return readNumber(prompt: prompt)
+/// Create a new array of the 4 possible answers, shuffled
+func createAnswersArray(from array : [String]) -> [String] {
+    var options:[String] = []
+    for i in 1...4 {
+        options.append(array[i])
     }
-    return number
+    options.shuffle()
+    return options
+}
+
+/// Returns an integer between an inclusive upper and lower bound
+func readNumber(prompt: String, from min : Int, to max: Int) -> Int 
+{
+    print(prompt)
+    guard let userInput = readLine(), let userInt = Int(userInput), userInt >= min, userInt <= max else {
+        print("Invalid input.")
+        return readNumber(prompt: prompt, from: min, to: max)
+    }
+    return userInt
 }
 
 @main
 struct SwiftPlayground {
     static func main() {
+        // Constants and Variables
+        /// Each array includes the english word, the answer in the target language and three wrong answers
+        let vocabulary = [
+            ["Hello",   "Hola",      "Gracias", "Lo Siento", "Bonjour"],
+            ["Thanks",  "Gracias",   "Bueno",   "Tambien",   "Cinco"],
+            ["Please",  "Por Favor", "Adios",   "Pollo",     "Siete"],
+            ["Sorry",   "Lo Siento", "Si",      "Y tu",      "Ocho"],
+            ["Goodbye", "Adios",     "Abrigo",  "Hola",      "Amigo"]
+        ]
 
-        ///the threshold of an overisize  piece of furniture
-        let maximumItemVolume = 2.0
-        ///the threshold of usable volume being too small
-        let minimumUsableVolume = 60.0
+        /// The indices of the questions that the user got incorrect
+        var incorrectIndices: [Int] = [] 
 
-        //Declare furniture sizes in an array
-        let furnitureVolumes = [1.2, 0.8, 2.5, 0.6, 1.0]
+        /// The number of questions that the user got wrong
+        var incorrectCount = 0
 
-        //Get Dimensions
-        let roomLength = readNumber(prompt: "Enter Room Length:")
-        let roomWidth = readNumber(prompt: "Enter Room Width")
-        let roomHeight = readNumber(prompt: "Enter Room Height")
+        /// The number of questions that have been asked
+        var count = 0
 
-        //Calculate and print the area of the room
-        let roomArea = roomLength * roomWidth
-        print("Room area: \(roomArea)m²")
+        // Loop until all of the vocab questions have been asked
 
-        //Do the same again for volume
-        let roomVolume = roomArea * roomHeight
-        print("Room volume: \(roomVolume)m³")
+        while count < vocabulary.count {
+            // Show the question
+            print("Find the translation of \(vocabulary[count][0])")
+            // list options in random order
 
-        //Loop through furniture
-        ///The total volume of furniture
-        var totalFurnitureVolume = 0.0 
-        for (index, volume) in furnitureVolumes.enumerated(){
-            if (volume > maximumItemVolume){
-                print("Oversized Furniture Detected")
+            // Create an array of options and shuffle them
+            let options = createAnswersArray(from: vocabulary[count])
+
+            for (index, option) in options.enumerated() {
+                print("\(index+1). \(option)")
             }
-            print("Item \(index+1): \(volume)m³")
-            totalFurnitureVolume += volume
+
+            // Get the users input
+            let inputInt = readNumber(prompt: "Enter an answer as an integer:", from: 1, to: 4)
+
+            // Check if the answer was correct
+            if(options[inputInt-1] == vocabulary[count][1]) {
+                print("Correct!")
+            } else {
+                // If not, take note of the question to ask later
+                print("Incorrect.")
+                incorrectCount += 1
+                incorrectIndices.append(count)
+                // And print the correct answer
+                print("The correct answer was \(vocabulary[count][1]).")
+            }
+
+            count += 1
         }
 
-        //Calculate and print the leftover volume in the room
-        let usableVolume = roomVolume - totalFurnitureVolume
-        print("Usable Volume: \(usableVolume)m³")
+        // Loop through all incorrect questions
+        while incorrectIndices.count > 0 
+        {
+            for incorrectIndex in incorrectIndices {
+                // Show the question
+                print("Find the translation of \(vocabulary[incorrectIndex][0])")
+                // list options in random order
 
-        //Check if usable volume is less than 60m3, print warning if so
-        if(usableVolume < minimumUsableVolume){
-            print("Usable volume is not large enough.")
-        } else {
-            print("Usable volume is fine.")
+                // Create an array of options and shuffle them
+                let options = createAnswersArray(from: vocabulary[incorrectIndex])
+
+                for (index, option) in options.enumerated() {
+                    print("\(index+1). \(option)")
+                }
+
+                // Get the users input
+                let inputInt = readNumber(prompt: "Enter an answer as an integer:", from: 1, to: 4)
+
+                // Check if the answer was correct
+                if(options[inputInt-1] == vocabulary[incorrectIndex][1]) {
+                    print("Correct!")
+                    // Remove the question from the incorrect array
+                    let positionIn = incorrectIndices.firstIndex(of: incorrectIndex)
+                    incorrectIndices.remove(at: positionIn!)
+                } else {
+                    // Otherwise print the answer
+                    print("Incorrect.")
+                    print("The correct answer was \(vocabulary[incorrectIndex][1]).")
+                    incorrectCount += 1
+                }
+            }
         }
+
+        //Print the number of mistakes
+        print("Overall, you made \(incorrectCount) mistakes.")
     }
 }
