@@ -60,15 +60,15 @@ func roundUp(_ input: Double) -> Int
     }
 }
 
-/// Takes a double, and rounds it down to the nearest multiple of a Kumara's weight
+/// Takes a double, and rounds it down to the nearest multiple of a number, eg an individual Kumara's weight
 /// Parameters:
-/// - input: the weight to be rounded
-/// - individualWeight: the weight of a single kumara
-/// Returns the weight rounded down to a single kumara
-func roundToWholeKumara (_ input: Double, individualWeight: Double) -> Double
+/// - input: the number to be rounded
+/// - interval: the interval to round down to
+/// Returns the rounded down number
+func roundDownToInterval (_ input: Double, to interval: Double) -> Double
 {
-    let kumaraPerKG = 1.0/individualWeight
-    return (Double(Int(input * kumaraPerKG)) / kumaraPerKG)
+    let roundMultiplier = 1.0/interval
+    return (Double(Int(input * roundMultiplier)) / roundMultiplier)
 }
 
 /// Show the programs available to the user, and let them select one.
@@ -110,9 +110,14 @@ struct SwiftPlayground {
         let pricePerKg = 3.0
         let pricePerBag = 0.2
 
-        let minimumWeight = 0.1
+        let singleKumaraWeight = 0.1
 
         let maximumWeightPerBag = 5.0
+
+        // The smallest interval that prices can be tracked in. 0.01 tracks to cents
+        let priceRoundingFactor = 0.01
+        // Same for weight, with 0.001 tracking to grams
+        let weightRoundingFactor = 0.001
 
         // 2D array containing previous sales. First row is the weight of kumara sold, second row is the number of bags used, and the third row is the sale price.
         var salesRecords : [[Double]] = [
@@ -120,11 +125,6 @@ struct SwiftPlayground {
             [],
             []
         ]
-
-        //TEST
-        print("13.31")
-        print(roundToWholeKumara(13.31, individualWeight: minimumWeight))
-        //IMPLEMENT THIS NEXT SPELL
 
         // Main loop for the program
         while true
@@ -135,9 +135,17 @@ struct SwiftPlayground {
                 // 1. Add Kumara Stock
                 case 1: 
 
-                // add to weight, ensuring that the new weight wont exceed 50kg
-                let weightToAdd = readDouble(from: minimumWeight, to: maxStock - currentStock, prompt: "How much stock would you like to add (kg):")
+                // check that the bin is not full
+                if(currentStock >= maxStock) {
+                    print("Bin is already full.")
+                    continue
+                }
+
+                // add to weight, ensuring that the new weight wont exceed the max weight
+                let maxToAdd = roundDownToInterval(maxStock - currentStock, to: singleKumaraWeight)
+                let weightToAdd = roundDownToInterval(readDouble(from: singleKumaraWeight, to: maxToAdd, prompt: "How much stock would you like to add (kg):"), to:  singleKumaraWeight)
                 currentStock += weightToAdd
+                currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
                 print("Kumara Added.")
                 continue
 
@@ -157,7 +165,7 @@ struct SwiftPlayground {
 
                 // Loop through sales, displaying how many kg of kumara and number of bags per sale
                 for i in 0..<salesRecords[0].count {
-                    print("\(i+1). Sold \(salesRecords[0][i])kg of Kumara using \(Int(salesRecords[1][i])) bags for $\(salesRecords[2][i]).")
+                    print("\(i+1). Sold \(salesRecords[0][i])kg of Kumara using \(Int(salesRecords[1][i])) bags for $\(salesRecords[2][i])")
                 }
 
                 continue
@@ -173,11 +181,11 @@ struct SwiftPlayground {
 
                 print ("""
                 Store Summary
-                Total Weight Sold: \(totalWeightSold)kg
+                Total Weight Sold: \(roundDownToInterval(totalWeightSold, to: weightRoundingFactor))kg
                 Total Bags Sold: \(totalBagsSold)
-                Total Earnings: $\(totalEarnings)
-                Average Weight Per Bag: \(totalWeightSold / Double(totalBagsSold))kg
-                Average Earnings Per Bag: $\(totalEarnings / Double(totalBagsSold))
+                Total Earnings: $\(roundDownToInterval(totalEarnings, to: priceRoundingFactor))
+                Average Weight Per Bag: \(roundDownToInterval(totalWeightSold / Double(totalBagsSold), to: weightRoundingFactor))kg
+                Average Earnings Per Bag: $\(roundDownToInterval(totalEarnings / Double(totalBagsSold), to: priceRoundingFactor))
                 """)
 
                 continue
@@ -185,23 +193,23 @@ struct SwiftPlayground {
                 // 5. Record A Sale
                 case 5:
                 // Check that there is enough kumara in the box to begin with. if not, move on.
-                if(currentStock < minimumWeight){
+                if(currentStock < singleKumaraWeight){
                     print("There are no Kumara in the box.")
                     continue
                 }
 
                 // The user can purchase as many kumara as is in the box. However, they must have a limit of 5kg kumara per bag.
-                let kumaraPurchased = readDouble(from: minimumWeight, to: currentStock, prompt: "How much Kumara would you like to purchase (kg):")
+                let kumaraPurchased = roundDownToInterval(readDouble(from: singleKumaraWeight, to: currentStock, prompt: "How much Kumara would you like to purchase (kg):"), to: singleKumaraWeight)
 
                 // Let the user choose how many bags to buy, with a maximum of 5kg per bag and a minimum of 0.1kg per bag
                 let minimumBags = roundUp(kumaraPurchased/maximumWeightPerBag)
-                let maximumBags = roundUp(kumaraPurchased/minimumWeight)
+                let maximumBags = roundUp(kumaraPurchased/singleKumaraWeight)
                 let bagsPurchased = readInteger(from: minimumBags, to: maximumBags, prompt: "How many bags would you like to use:")
 
                 // Calculate the price
-                let kumaraPrice = kumaraPurchased * pricePerKg
-                let bagPrice = Double(bagsPurchased) * pricePerBag
-                let salePrice = kumaraPrice + bagPrice
+                let kumaraPrice = roundDownToInterval(kumaraPurchased * pricePerKg, to: priceRoundingFactor)
+                let bagPrice = roundDownToInterval(Double(bagsPurchased) * pricePerBag, to: priceRoundingFactor)
+                let salePrice = roundDownToInterval(kumaraPrice + bagPrice, to: priceRoundingFactor)
                 print("""
                 Cost of Kumara: $\(kumaraPrice)
                 Cost of Bags: $\(bagPrice)
