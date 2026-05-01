@@ -136,13 +136,13 @@ struct SwiftPlayground {
                 // 1. Add Kumara Stock
                 case 1: 
 
-                // check that the bin is not full
+                // Check that the bin is not full
                 if(currentStock >= maxStock) {
                     print("Bin is already full.")
                     continue
                 }
 
-                // add to weight, ensuring that the new weight wont exceed the max weight
+                // Add to weight, ensuring that the new weight wont exceed the max weight
                 let maxToAdd = roundDownToInterval(maxStock - currentStock, to: singleKumaraWeight)
                 
                 let weightToAdd = roundDownToInterval(readDouble(from: singleKumaraWeight, to: maxToAdd, prompt: "How much stock would you like to add (kg):"), to:  singleKumaraWeight)
@@ -195,7 +195,7 @@ struct SwiftPlayground {
 
                 // 5. Record A Sale
                 case 5:
-                // Check that there is enough kumara in the box to begin with. if not, move on.
+                // Check that there is enough kumara in the box to begin with. If not, move on.
                 if(currentStock < singleKumaraWeight){
                     print("There are no Kumara in the box.")
                     continue
@@ -225,7 +225,7 @@ struct SwiftPlayground {
                 totalBagsSold += bagsPurchased
                 totalEarnings += salePrice
 
-                // Re-round current stock to prevent issues with float maths
+                // Re-round current stock to prevent issues with double maths
                 currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
 
                 // Apply sales details to the array, with row 0 holding kumara weights, row 1 holding number of bags and row 2 holding sales.
@@ -245,7 +245,7 @@ struct SwiftPlayground {
                 continue
             }
 
-            // This code will only be run if the break within the switch is called. breaking again will finish the program
+            // This code will only be run if the break within the switch is called. Breaking again will finish the program
             print("Thank you for using Kumara Stall.")
             break
         }
