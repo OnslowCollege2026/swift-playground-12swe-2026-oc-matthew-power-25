@@ -60,7 +60,8 @@ func roundUp(_ input: Double) -> Int
     }
 }
 
-/// Takes a double, and rounds it down to the nearest multiple of a number, eg an individual Kumara's weight
+/// Takes a double, and rounds it down to the nearest multiple of a number, eg an individual Kumara's weight.
+/// Can also be used to smooth out the issues with double arithmetic, where small decimals are added.
 /// Parameters:
 /// - input: the number to be rounded
 /// - interval: the interval to round down to
@@ -143,7 +144,9 @@ struct SwiftPlayground {
 
                 // add to weight, ensuring that the new weight wont exceed the max weight
                 let maxToAdd = roundDownToInterval(maxStock - currentStock, to: singleKumaraWeight)
+                
                 let weightToAdd = roundDownToInterval(readDouble(from: singleKumaraWeight, to: maxToAdd, prompt: "How much stock would you like to add (kg):"), to:  singleKumaraWeight)
+
                 currentStock += weightToAdd
                 currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
                 print("Kumara Added.")
@@ -221,6 +224,9 @@ struct SwiftPlayground {
                 totalWeightSold += kumaraPurchased
                 totalBagsSold += bagsPurchased
                 totalEarnings += salePrice
+
+                // Re-round current stock to prevent issues with float maths
+                currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
 
                 // Apply sales details to the array, with row 0 holding kumara weights, row 1 holding number of bags and row 2 holding sales.
                 salesRecords[0].append(kumaraPurchased)
