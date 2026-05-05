@@ -50,7 +50,7 @@ func readDouble(from min: Double, to max: Double, prompt: String) -> Double
 /// Returns the subsequent integer
 func roundUp(_ input: Double) -> Int
 {
-    // Save the nearest integer, not necessarily above the double
+    // Save the rounded integer, not necessarily above the double
     let RoundInput = Int(input)
     // If the closer integer is smaller than the original input, it means that it got rounded down
     if(Double(RoundInput) < input){
@@ -60,16 +60,24 @@ func roundUp(_ input: Double) -> Int
     }
 }
 
-/// Takes a double, and rounds it down to the nearest multiple of a number, eg an individual Kumara's weight.
+/// Takes a double, and rounds it  to the nearest multiple of a number, eg an individual Kumara's weight.
 /// Can also be used to smooth out the issues with double arithmetic, where small decimals are added.
 /// Parameters:
 /// - input: the number to be rounded
-/// - interval: the interval to round down to
-/// Returns the rounded down number
-func roundDownToInterval (_ input: Double, to interval: Double) -> Double
+/// - interval: the interval to round  to
+/// Returns the rounded number
+func roundToInterval (_ input: Double, to interval: Double) -> Double
 {
     let roundMultiplier = 1.0/interval
-    return (Double(Int(input * roundMultiplier)) / roundMultiplier)
+    let roundedDown = (Double(Int(input * roundMultiplier)) / roundMultiplier)
+    let roundedUp = (Double(roundUp(input * roundMultiplier)) / roundMultiplier)
+    // check if it is closer to the lower or upper round
+    if(abs(roundedDown-input) < abs(roundedUp-input)){
+        return roundedDown
+    }
+    else{
+        return roundedUp
+    }
 }
 
 /// Show the programs available to the user, and let them select one.
@@ -143,12 +151,12 @@ struct SwiftPlayground {
                 }
 
                 // Add to weight, ensuring that the new weight wont exceed the max weight
-                let maxToAdd = roundDownToInterval(maxStock - currentStock, to: singleKumaraWeight)
+                let maxToAdd = roundToInterval(maxStock - currentStock, to: singleKumaraWeight)
                 
-                let weightToAdd = roundDownToInterval(readDouble(from: singleKumaraWeight, to: maxToAdd, prompt: "How much stock would you like to add (kg):"), to:  singleKumaraWeight)
+                let weightToAdd = roundToInterval(readDouble(from: singleKumaraWeight, to: maxToAdd, prompt: "How much stock would you like to add (kg):"), to:  singleKumaraWeight)
 
                 currentStock += weightToAdd
-                currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
+                currentStock = roundToInterval(currentStock, to: singleKumaraWeight)
                 print("Kumara Added.")
                 continue
 
@@ -184,11 +192,11 @@ struct SwiftPlayground {
 
                 print ("""
                 Store Summary
-                Total Weight Sold: \(roundDownToInterval(totalWeightSold, to: weightRoundingFactor))kg
+                Total Weight Sold: \(roundToInterval(totalWeightSold, to: weightRoundingFactor))kg
                 Total Bags Sold: \(totalBagsSold)
-                Total Earnings: $\(roundDownToInterval(totalEarnings, to: priceRoundingFactor))
-                Average Weight Per Bag: \(roundDownToInterval(totalWeightSold / Double(totalBagsSold), to: weightRoundingFactor))kg
-                Average Earnings Per Bag: $\(roundDownToInterval(totalEarnings / Double(totalBagsSold), to: priceRoundingFactor))
+                Total Earnings: $\(roundToInterval(totalEarnings, to: priceRoundingFactor))
+                Average Weight Per Bag: \(roundToInterval(totalWeightSold / Double(totalBagsSold), to: weightRoundingFactor))kg
+                Average Earnings Per Bag: $\(roundToInterval(totalEarnings / Double(totalBagsSold), to: priceRoundingFactor))
                 """)
 
                 continue
@@ -202,7 +210,7 @@ struct SwiftPlayground {
                 }
 
                 // The user can purchase as many kumara as is in the box. However, they must have a limit of 5kg kumara per bag.
-                let kumaraPurchased = roundDownToInterval(readDouble(from: singleKumaraWeight, to: currentStock, prompt: "How much Kumara would you like to purchase (kg):"), to: singleKumaraWeight)
+                let kumaraPurchased = roundToInterval(readDouble(from: singleKumaraWeight, to: currentStock, prompt: "How much Kumara would you like to purchase (kg):"), to: singleKumaraWeight)
 
                 // Let the user choose how many bags to buy, with a maximum of 5kg per bag and a minimum of 0.1kg per bag
                 let minimumBags = roundUp(kumaraPurchased/maximumWeightPerBag)
@@ -210,9 +218,9 @@ struct SwiftPlayground {
                 let bagsPurchased = readInteger(from: minimumBags, to: maximumBags, prompt: "How many bags would you like to use:")
 
                 // Calculate the price
-                let kumaraPrice = roundDownToInterval(kumaraPurchased * pricePerKg, to: priceRoundingFactor)
-                let bagPrice = roundDownToInterval(Double(bagsPurchased) * pricePerBag, to: priceRoundingFactor)
-                let salePrice = roundDownToInterval(kumaraPrice + bagPrice, to: priceRoundingFactor)
+                let kumaraPrice = roundToInterval(kumaraPurchased * pricePerKg, to: priceRoundingFactor)
+                let bagPrice = roundToInterval(Double(bagsPurchased) * pricePerBag, to: priceRoundingFactor)
+                let salePrice = roundToInterval(kumaraPrice + bagPrice, to: priceRoundingFactor)
                 print("""
                 Cost of Kumara: $\(kumaraPrice)
                 Cost of Bags: $\(bagPrice)
@@ -226,7 +234,7 @@ struct SwiftPlayground {
                 totalEarnings += salePrice
 
                 // Re-round current stock to prevent issues with double maths
-                currentStock = roundDownToInterval(currentStock, to: singleKumaraWeight)
+                currentStock = roundToInterval(currentStock, to: singleKumaraWeight)
 
                 // Apply sales details to the array, with row 0 holding kumara weights, row 1 holding number of bags and row 2 holding sales.
                 salesRecords[0].append(kumaraPurchased)
@@ -237,7 +245,7 @@ struct SwiftPlayground {
 
                 // 6. Exit
                 case 6:
-                // This will only terminate the switch loop, so another break is used after the switch.
+                // This will only terminate the switch, so another break is used outside of the switch to exit the while loop.
                 break
 
                 // Fallback, start the loop again. should never be called due to the guard let function
@@ -245,7 +253,7 @@ struct SwiftPlayground {
                 continue
             }
 
-            // This code will only be run if the break within the switch is called. Breaking again will finish the program
+            // This code will only be run if the break within the switch is called. Breaking again will exit the program
             print("Thank you for using Kumara Stall.")
             break
         }
